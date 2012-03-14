@@ -1,0 +1,12 @@
+This program takes a TrueType font and an SVG document, and outputs a new font
+with the SVG document in its 'SVG ' table and all the old font information.
+
+Try:
+./insertsvg LiberationSerif-Regular.ttf circles.xml out.ttf
+
+Then use in the latest Firefox with all the patches from Bug 719286 applied, and
+the gfx.font_rendering.opentype_svg.enabled option set to `true'.
+
+Included is a file named `test.html'. Hopefully that should work.
+
+I can only apologise for the quality of code.
