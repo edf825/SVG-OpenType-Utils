@@ -33,13 +33,15 @@ class CmapTable:
         continue
       self.subtables.append(subtable)
 
-  def map_glyph(self, char, var_selector = '\0'):
+  def map_glyph(self, char):
+    char_code = ord(char[0])
+    var_selector = 0 if len(char) == 1 else ord(char[1])
     for subtable in self.subtables:
-      glyph_id = subtable.map_glyph(ord(char), ord(var_selector))
+      glyph_id = subtable.map_glyph(char_code, var_selector)
       if glyph_id and glyph_id != 0:
         return glyph_id
     if var_selector != 0:
-      return self.map_glyph(ord(char))
+      return self.map_glyph([char[0]])
     return 0
 
 class Cmap4Subtable:

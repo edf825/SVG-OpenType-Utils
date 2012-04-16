@@ -15,9 +15,8 @@ class FontTable:
     self.tag = a + b + c + d
 
     self.data = data[self.offset : self.offset + self.length]
-    padding = ("\0" * ((4 - (self.length % 4)) % 4));
-    self.data += padding
-    self.padded_length = self.length + len(padding)
+    self.padded_length = 0
+    self.pad_data()
 
     print "got table " + self.tag
     print "length " + str(len(self.data)) + " : " + str(self.length)
@@ -31,9 +30,21 @@ class FontTable:
     sum %= 1 << 32
     return sum
 
-  def make_header(self, offset):
-    struct.pack(header_format, self.tag[0], self.tag[1], self.tag[2], self.tag[3],
-                self.compute_checksum(), offset, self.length)
+  def make_header(self):
+    return struct.pack(FontTable.header_format, self.tag[0], self.tag[1],
+                       self.tag[2], self.tag[3], self.compute_checksum(),
+                       self.offset, self.length)
+
+  def pad_data(self):
+    if self.padded_length == len(self.data):
+      return
+
+    length = len(self.data)
+    padded_len = length + ((4 - (length % 4)) % 4)
+
+    self.data += '\0' * (padded_len - length)
+    self.length = length
+    self.padded_length = padded_len
 
 class FontInfo:
 
@@ -62,6 +73,25 @@ class FontInfo:
     return (self.version_major, self.version_minor, self.num_tables,
             self.search_range, self.entry_selector, self.range_shift)
 
+  def make_header(self):
+    self.recompute_header_values()
+    return struct.pack(self.header_format,
+                       self.version_major, self.version_minor,
+                       self.num_tables, self.search_range, self.entry_selector,
+                       self.range_shift)
+
+  def recompute_header_values(self):
+    num_tables = len(self.tables)
+    entry_selector = 0
+    while 2**entry_selector <= num_tables:
+      entry_selector = entry_selector + 1
+    entry_selector = entry_selector - 1
+    search_range = 2**entry_selector * 16
+    range_shift = num_tables * 16 - search_range
+
+    (self.num_tables, self.entry_selector, self.search_range, self.range_shift) = \
+      (num_tables, entry_selector, search_range, range_shift)
+
   def read_tables(self):
     for i in range(self.num_tables):
       table = FontTable(i, self.data)
@@ -69,3 +99,23 @@ class FontInfo:
 
   def get_table_headers(self):
     return self.tables.keys()
+
+  def serialize(self):
+    tags = sorted(self.tables.keys())
+    num_tables = len(tags)
+
+    result = self.make_header()
+
+    offset = FontInfo.header_size + num_tables * FontTable.header_size
+    for tag in tags:
+      table = self.tables[tag]
+      table.offset = offset
+
+      table.pad_data()
+      offset += table.padded_length
+      result += table.make_header()
+
+    for tag in tags:
+      result += self.tables[tag].data
+
+    return result

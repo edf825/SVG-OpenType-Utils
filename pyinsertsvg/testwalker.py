@@ -1,20 +1,23 @@
 #!/usr/bin/python
-from svgwalker import get_glyph_lists
+
+from svgwalker import SVGInfo
 from fontinfo import FontInfo
 from cmap import CmapTable
+from svgtable import SVGTable
 
-(glyph_ids, glyph_chars) = get_glyph_lists("test.svg")
+svg = SVGInfo("test.svg")
 
 font = FontInfo("UVSLiberation.otf")
 cmap = CmapTable(font.tables['cmap'].data)
 
-for glyph_char in glyph_chars:
-  glyph_id = 0
-  if len(glyph_char) == 1:
-    glyph_id = cmap.map_glyph(glyph_char[0])
-  elif len(glyph_char) == 2:
-    glyph_id = cmap.map_glyph(glyph_char[0], glyph_char[1])
-  else:
-    print "glyphchar string with bad length " + str(len(glyph_char))
-    continue
-  print glyph_char + " => " + str(glyph_id)
+for glyph_char in svg.glyph_chars:
+  print glyph_char + " => " + str(cmap.map_glyph(glyph_char))
+
+svgtable = SVGTable(cmap, map(SVGInfo, ["reftest1.svg", "reftest2.svg",
+                                        "reftest3.svg", "reftest4.svg"]))
+
+font.tables['SVG '] = svgtable
+
+outfile = open("out.otf", "w")
+outfile.write(font.serialize())
+outfile.close()
