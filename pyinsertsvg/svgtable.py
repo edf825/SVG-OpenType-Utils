@@ -5,16 +5,14 @@ from fontinfo import FontTable
 
 class SVGTable(FontTable):
 
-# num documents, num indices
+  table_version = 1
+
+# version, num index entries
   header_format = ">HH"
   header_size = struct.calcsize(header_format)
 
-# offset, length
-  doc_header_format = ">LL"
-  doc_header_size = struct.calcsize(doc_header_format)
-
-# start glyph, end glyph, document index
-  index_format = ">3H"
+# start glyph, end glyph, doc offset, doc length
+  index_format = ">HHLL"
   index_size = struct.calcsize(index_format)
 
   def __init__(self, cmap, svg_array):
@@ -47,29 +45,33 @@ class SVGTable(FontTable):
     last_doc = mappings[first_glyph]
     for key in keys:
       if last_doc != mappings[key]:
-        self.ranges.append((first_glyph, last_glyph, last_doc))
+        self.ranges.append((first_glyph, last_glyph + 1, last_doc))
         first_glyph = key
         last_doc = mappings[key]
       last_glyph = key
 
-    self.ranges.append((first_glyph, last_glyph, last_doc))
+    self.ranges.append((first_glyph, last_glyph + 1, last_doc))
 
     print self.ranges
 
   def make_data(self):
     data = ""
     offset = self.header_size + \
-             self.doc_header_size * len(self.svg_array) + \
              self.index_size * len(self.ranges)
 
-    data = struct.pack(self.header_format, len(self.svg_array), len(self.ranges))
+    data = struct.pack(self.header_format, self.table_version, len(self.ranges))
 
+    svg_offsets = []
     for svg in self.svg_array:
-      data += struct.pack(self.doc_header_format, offset, len(svg.svg_text))
+      svg_offsets.append(offset)
       offset += len(svg.svg_text)
 
     for (start_glyph, end_glyph, doc_id) in self.ranges:
-      data += struct.pack(self.index_format, start_glyph, end_glyph, doc_id)
+      data += struct.pack(self.index_format, start_glyph, end_glyph,
+                          svg_offsets[doc_id],
+                          len(self.svg_array[doc_id].svg_text))
+      print "offset " + str(svg_offsets[doc_id]) + \
+              "; len " + str(len(self.svg_array[doc_id].svg_text))
 
     for svg in self.svg_array:
       data += svg.svg_text
