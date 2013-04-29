@@ -1,5 +1,8 @@
+SVG in OpenType Utils
+=====================
+
 What Is This?
-=============
+-------------
 
 This is a collection of (well, two; only one of which is relevant anymore) tools for creating SVG in Opentype
 fonts. [1]
@@ -11,7 +14,7 @@ This feature is currently supported by Firefox only. OpenType glyph definitions 
 can use the resulting fonts anywhere.
 
 Trying It Out
-=============
+-------------
 
 To try this out in Firefox, you'll have to turn on the `gfx.font_rendering.opentype_svg.enabled` preference.
 (navigate to about:config, search for `svg`, and double click on the preference with that name)
@@ -19,7 +22,7 @@ To try this out in Firefox, you'll have to turn on the `gfx.font_rendering.opent
 Then point Firefox at http://flores.geek.nz/t/svgot
 
 Making a Font
-=============
+-------------
 
 You can use the `insertsvg/insertsvg.py` script to create an SVG font of your own. I've already provided a font
 and SVG documents so you can try it for yourself.
@@ -36,7 +39,7 @@ Check out the `reftest?.svg` files to get an idea of how these SVG glyph definit
 explanation of things, check out the spec linked below.
 
 More Information
-================
+----------------
 
 For more information on the SVG in Opentype format itself, the (draft) specification is very readable and can be found
 at http://dev.w3.org/SVG/modules/fonts/SVG-OpenType.html
