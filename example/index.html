@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SVG in Opentype Example</title>
+<style type="text/css">
+@font-face {
+  font-family: Liberation;
+  src: url('LiberationSerif-Regular.ttf');
+}
+
+@font-face {
+  font-family: LiberationSVG;
+  src: url('svg.ttf');
+}
+
+body {
+  background-color: white;
+  text-align: center;
+}
+
+div#container {
+  margin: 20pt auto auto auto;
+  padding: 0;
+  display: inline;
+  width: 800px;
+}
+
+#header {
+display: inline-block;
+  width: 800px;
+color: #9db6db;
+       font-size: 36pt;
+}
+
+div#without, div#with {
+  display: inline-block;
+  width: 380px;
+  padding: 10pt;
+  text-align: center;
+margin: 25px 5px 5px 5px;
+}
+
+#without {
+  background-color: #db9db6;
+}
+
+#with {
+  background-color: #b6db9d;
+}
+
+#without, #without-text {
+  font-family: Liberation;
+  font-size: 20pt;
+}
+
+#with, #with-text {
+  font-family: LiberationSVG;
+  font-size: 20pt;
+}
+
+textarea {
+  display: block;
+  margin: 20pt auto auto auto;
+  width: 80%;
+  height: 150pt;
+}
+</style>
+</head>
+<body>
+<div id="container">
+
+<div id="header">
+SVG in OpenType Fonts
+</div>
+
+<div id="without">
+Without SVG
+
+<textarea id="without-text">
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+</textarea>
+</div>
+
+<div id="with">
+With SVG
+
+<textarea id="with-text">
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+</textarea>
+</div>
+
+</div>
+
+<script>
+var withText = document.querySelector("#with-text");
+var withoutText = document.querySelector("#without-text");
+
+withText.onkeyup = function() { withoutText.value = withText.value; }
+withoutText.onkeyup = function() { withText.value = withoutText.value; }
+</script>
+
+</body>
+</html>
