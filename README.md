@@ -38,6 +38,13 @@ You can then include this `out.ttf` in a web site like any other web font.
 Check out the `reftest?.svg` files to get an idea of how these SVG glyph definitions work. For a more detailed
 explanation of things, check out the spec linked below.
 
+Making a Rubbish Font
+---------------------
+
+`insertsvg/insertrubbish.py` is a script for inserting arbitrary data into the
+'SVG ' Opentype table. As the name suggests, I use it for inserting rubbish into
+the table to see if my implementation can safely ignore it.
+
 More Information
 ----------------
 
