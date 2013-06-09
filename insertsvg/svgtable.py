@@ -45,12 +45,12 @@ class SVGTable(FontTable):
     last_doc = mappings[first_glyph]
     for key in keys:
       if last_doc != mappings[key]:
-        self.ranges.append((first_glyph, last_glyph + 1, last_doc))
+        self.ranges.append((first_glyph, last_glyph, last_doc))
         first_glyph = key
         last_doc = mappings[key]
       last_glyph = key
 
-    self.ranges.append((first_glyph, last_glyph + 1, last_doc))
+    self.ranges.append((first_glyph, last_glyph, last_doc))
 
     print self.ranges
 
